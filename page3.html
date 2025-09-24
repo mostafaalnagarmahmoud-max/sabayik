@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>سـبـائـك الكويت</title>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/styles.css" />
+
+</head>
+<body>
+  <header>
+
+    
+    <div class="nav-container">
+      <ul class="nav-menu">
+        <li><a href="#">اتصل بنا</a></li>
+        <li><a href="#">أسعار الذهب</a></li>
+        <li><a href="#">أسعار الفضة</a></li>
+        <li><a href="#" class="active">الرئيسية</a></li>
+
+      </ul>
+      <div class="hamburger"><span></span><span></span><span></span></div>
+    </div>
+    <div class="logo-container">
+      <div class="company-name">سـبـائـك الـكـويـت</div>
+      <div class="logo"><i class="fas fa-gem"></i></div>
+    </div>
+    
+    <div class="page-title">
+      <div class="update-counter">
+        سيتم تحديث الأسعار خلال 
+        <span class="counter-value" id="countdown">15</span> ثانية 
+        حسب السعر العالمي 
+        <span class="counter-value" id="live-time"></span>
+      </div>
+    </div>
+  </header>
+
+  <div class="price-cards">
+    <div class="card gold">
+      <h2>ذهب 24K</h2>
+      <p class="price" id="gold-price">--</p>
+      <p class="note">السعر المحلي</p>
+    </div>
+    <div class="card gold">
+      <h2>ذهب 22K</h2>
+      <p class="price" id="gold22-price">--</p>
+      <p class="note">السعر المحلي</p>
+    </div>
+    <div class="card gold">
+      <h2>ذهب 21K</h2>
+      <p class="price" id="gold21-price">--</p>
+      <p class="note">السعر المحلي</p>
+    </div>
+    <div class="card gold">
+      <h2>ذهب 18K</h2>
+      <p class="price" id="gold18-price">--</p>
+      <p class="note">السعر المحلي</p>
+    </div>
+    <div class="card silver">
+      <h2>فضة</h2>
+      <p class="price" id="silver-price">--</p>
+      <p class="note">السعر المحلي</p>
+    </div>
+    <div class="card gold">
+      <h2>القيمة الإجمالية</h2>
+      <p class="price" id="calculated-price">--</p>
+      <p class="note">حساب مخصص</p>
+    </div>
+  </div>
+  
+
+  <footer>
+    <p>المصدر: بيانات السوق العالمية</p>
+    <button class="btn-share">مشاركة السعر</button>
+  </footer>
+
+  <script src="/script.js"></script>
+</body>
+</html>
