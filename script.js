@@ -10,34 +10,26 @@ const LIVE_TIME = document.getElementById("live-time");
 // Adjustments loaded from MongoDB
 let priceAdjustments = { box1: 0, box2: 0, box3: 0, box4: 0, box5: 0, box6: 0 };
 
-// ✅ Load adjustments from MongoDB (new logic)
+// ✅ Load adjustments from MongoDB (works on Render)
 async function loadMongoAdjustments() {
   try {
     console.log("📥 Fetching adjustments from MongoDB...");
-    const response = await fetch("http://localhost:3000/api/mongodb-data", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        action: "find",
-        collection: "asd",
-        filter: { goldExchange: { $exists: true } },
-        options: { sort: { _id: -1 }, limit: 1 }
-      })
-    });
+    const response = await fetch("/api/mongodb-data"); // ✅ relative URL (works on Render)
 
     const result = await response.json();
     if (result.success && result.data.length > 0) {
-      const doc = result.data[0];
-      // Map Mongo fields to your adjustment boxes
-      priceAdjustments = {
-        box1: parseFloat(doc["24k"] || 0),
-        box2: parseFloat(doc["22k"] || 0),
-        box3: parseFloat(doc["21k"] || 0),
-        box4: parseFloat(doc["18k"] || 0),
-        box5: 0, // You can use another Mongo field for calculated price if needed
-        box6: parseFloat(doc["silver"] || 0)
-      };
-      console.log("✅ Loaded adjustments:", priceAdjustments);
+      const doc = result.data.find(d => d.goldExchange === "yes"); // ✅ take the correct doc
+      if (doc) {
+        priceAdjustments = {
+          box1: parseFloat(doc["24k"] || 0),
+          box2: parseFloat(doc["22k"] || 0),
+          box3: parseFloat(doc["21k"] || 0),
+          box4: parseFloat(doc["18k"] || 0),
+          box5: 0,
+          box6: parseFloat(doc["silver"] || 0)
+        };
+        console.log("✅ Loaded adjustments:", priceAdjustments);
+      }
     } else {
       console.warn("⚠️ No Mongo data found, using defaults.");
     }
@@ -85,7 +77,6 @@ async function fetchPrices() {
       if (silver) {
         const silverPerGram = silver.buyPrice24;
         const silverPerKg = silverPerGram * 1000 + priceAdjustments.box6;
-
         SILVER_BOX.textContent = `${formatPrice(silverPerKg)} KWD`;
       }
     }
