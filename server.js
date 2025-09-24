@@ -9,9 +9,9 @@ const PORT = process.env.PORT || 3000;
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use(express.static(__dirname)); // This serves index.html, script.js, styles.css
+app.use(express.static(__dirname)); // Serves index.html, script.js, styles.css
 
-// ✅ Force serve index.html when visiting "/"
+// ✅ Serve index.html on root
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
@@ -51,7 +51,34 @@ app.get("/api/test-connection", async (req, res) => {
   }
 });
 
-// API: Fetch data
+// ✅ NEW: GET version of /api/mongodb-data for browser testing
+app.get("/api/mongodb-data", async (req, res) => {
+  try {
+    const db = await connectToMongoDB();
+    const collectionObj = db.collection("asd");
+
+    console.log("📥 Loading documents from collection: asd");
+
+    const data = await collectionObj.find({}).toArray();
+    const count = await collectionObj.estimatedDocumentCount();
+
+    res.json({
+      success: true,
+      data,
+      count: data.length,
+      stats: {
+        count,
+        size: count * 200, // fake size estimate
+        avgObjSize: count > 0 ? Math.round((count * 200) / count) : 0,
+      },
+    });
+  } catch (error) {
+    console.error("❌ Error loading data:", error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// API: Fetch data (POST version for advanced queries)
 app.post("/api/mongodb-data", async (req, res) => {
   try {
     const { action, collection, filter, options } = req.body;
@@ -81,7 +108,7 @@ app.post("/api/mongodb-data", async (req, res) => {
       count: data.length,
       stats: {
         count,
-        size: count * 200, // fake size estimate
+        size: count * 200,
         avgObjSize: count > 0 ? Math.round((count * 200) / count) : 0,
       },
     });
