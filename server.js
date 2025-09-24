@@ -1,26 +1,31 @@
 const express = require("express");
 const { MongoClient } = require("mongodb");
 const cors = require("cors");
+const path = require("path");
 
 const app = express();
-
-// ✅ Use Render environment variables
 const PORT = process.env.PORT || 3000;
-const MONGODB_URI = process.env.MONGODB_URI; // set this in Render dashboard
-const DB_NAME = process.env.DB_NAME || "test";
 
+// Middleware
 app.use(cors());
 app.use(express.json());
-app.use(express.static(__dirname));
+app.use(express.static(__dirname)); // This serves index.html, script.js, styles.css
+
+// ✅ Force serve index.html when visiting "/"
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
+});
+
+// MongoDB Config
+const MONGODB_URI = process.env.MONGODB_URI;
+const DB_NAME = process.env.DB_NAME || "test";
 
 let client;
 let database;
 
 // MongoDB Connection
 async function connectToMongoDB() {
-  if (!MONGODB_URI) {
-    throw new Error("❌ MONGODB_URI is not set in environment variables");
-  }
+  if (!MONGODB_URI) throw new Error("❌ MONGODB_URI is not set in environment variables");
   if (!client) {
     console.log("🔗 Connecting to MongoDB...");
     client = new MongoClient(MONGODB_URI);
@@ -50,6 +55,7 @@ app.get("/api/test-connection", async (req, res) => {
 app.post("/api/mongodb-data", async (req, res) => {
   try {
     const { action, collection, filter, options } = req.body;
+
     if (action !== "find") {
       return res.status(400).json({ success: false, error: "Invalid action" });
     }
@@ -75,7 +81,7 @@ app.post("/api/mongodb-data", async (req, res) => {
       count: data.length,
       stats: {
         count,
-        size: count * 200,
+        size: count * 200, // fake size estimate
         avgObjSize: count > 0 ? Math.round((count * 200) / count) : 0,
       },
     });
